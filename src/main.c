@@ -4,7 +4,7 @@
 #include "config.h"
 #include "hardware/watchdog.h"
 #include "rain_gauge/rain_gauge.h"
-#include "dht22_sensor/dht22_sensor.h"
+#include <dht.h>
 #include "xbee/xbee_uart.h"
 #include "xbee/xbee_frame_parser.h"
 #include "xbee/xbee_frame_handler.h"
@@ -13,11 +13,18 @@
 extern "C" {
 #endif
 
+
+static const dht_model_t DHT_MODEL = DHT22;
+
+
 int main() {
     stdio_init_all(); 
 
     rain_gauge_init();
-    dht22_sensor_init(DHT22_GPIO_PIN);
+
+    dht_t dht;
+    dht_init(&dht, DHT_MODEL, pio0, DHT22_GPIO_PIN, true /* pull_up */);
+
     xbee_uart_init();
     xbee_frame_parser_init();
 
@@ -55,11 +62,19 @@ int main() {
             float humidity = -99.9f;
             float temperature = -99.9f;
             
-            if (dht22_sensor_read_data(&humidity, &temperature)) {
-               printf("Humidity: %.1f%%, Temperature: %.1fC\n", humidity, temperature);
+            dht_result_t result = dht_finish_measurement_blocking(&dht, &humidity, &temperature);
+            if (result == DHT_RESULT_OK) 
+            {
+                printf("%.1f C, %.1f%% humidity\n", temperature, humidity);
             } 
-            else {
-                printf("Failed reading sensor.\n");
+            else if (result == DHT_RESULT_TIMEOUT)
+            {
+                printf("DHT sensor not responding. Please check your wiring.");
+            } 
+            else 
+            {
+                assert(result == DHT_RESULT_BAD_CHECKSUM);
+                printf("Bad checksum");
             }
 
             char payload_tx_buffer[MAX_PAYLOAD_TEXT_SIZE];
