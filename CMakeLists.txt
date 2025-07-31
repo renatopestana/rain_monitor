@@ -69,6 +69,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     pico_stdlib
     hardware_gpio
     hardware_uart
+    hardware_pio
+    hardware_dma
+    hardware_clocks
 )
 
 pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
