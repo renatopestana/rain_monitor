@@ -4,7 +4,7 @@
 #include "config.h"
 #include "hardware/watchdog.h"
 #include "rain_gauge/rain_gauge.h"
-#include <dht.h>
+#include "dht/include/dht.h"
 #include "xbee/xbee_uart.h"
 #include "xbee/xbee_frame_parser.h"
 #include "xbee/xbee_frame_handler.h"
