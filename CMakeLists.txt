@@ -33,11 +33,12 @@ project(rain_monitor C CXX)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Adicione os arquivos fonte de cada m�dulo
+add_subdirectory(./dht)
+
+# Adicione os arquivos fonte de cada modulo
 set(SOURCE_FILES
     src/main.c
     src/rain_gauge/rain_gauge.c
-    src/dht/dht.c
     src/xbee/xbee_uart.c
     src/xbee/xbee_frame_parser.c
     src/xbee/xbee_frame_handler.c
@@ -55,7 +56,6 @@ pico_set_program_version(${CMAKE_PROJECT_NAME} "0.2")
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/rain_gauge
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/dht
     ${CMAKE_CURRENT_SOURCE_DIR}/src/xbee
     ${CMAKE_CURRENT_SOURCE_DIR}/src/app_commands
 )
@@ -69,9 +69,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
     pico_stdlib
     hardware_gpio
     hardware_uart
-    hardware_pio
-    hardware_dma
-    hardware_clocks
 )
 
 pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
